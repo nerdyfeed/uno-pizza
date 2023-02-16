@@ -1,0 +1,50 @@
+.root {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+
+    li {
+        min-width: 24px;
+        min-height: 24px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        color: #232323;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color .3s ease, color .3s ease, opacity .3s ease;
+
+        &:hover {
+            background-color: #f4f4f4;
+        }
+
+        a {
+            color: inherit;
+            padding: 8px 14px;
+        }
+    }
+
+    :global {
+        .selected {
+            background-color: #fe5f1e;
+            color: #fff;
+
+            &:hover {
+                background-color: #f24701;
+                color: #fff;
+            }
+        }
+
+        .disabled {
+            opacity: .2;
+            pointer-events: none;
+        }
+    }
+}
