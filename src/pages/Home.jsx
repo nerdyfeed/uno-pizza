@@ -3,15 +3,19 @@ import qs from 'qs';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import {
+  selectFilter,
+  setCategoryId,
+  setCurrentPage,
+  setFilters,
+} from '../redux/slices/filterSlice';
 import Categories from '../components/Categories';
 import Pagination from '../components/Pagination';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Sort, { popupSortList } from '../components/Sort';
 
-import { SearchContext } from '../App';
-import { fetchPizzas } from '../redux/slices/pizzaSlice';
+import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -19,12 +23,10 @@ export default function Home() {
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
-  const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
-  const { items, status } = useSelector((state) => state.pizza);
+  const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
+  const { items, status } = useSelector(selectPizzaData);
 
   const sortType = sort.sortProperty;
-
-  const { searchValue } = React.useContext(SearchContext);
 
   const onChangeCategory = React.useCallback((id) => {
     dispatch(setCategoryId(id));
@@ -76,7 +78,7 @@ export default function Home() {
 
       const sort = popupSortList.find((obj) => obj.sortProperty === params.sortProperty);
 
-      // Отправляем в redux
+      // Отправляем в Redux
       dispatch(
         setFilters({
           ...params,
@@ -97,7 +99,7 @@ export default function Home() {
     }
 
     isSearch.current = false;
-  }, []);
+  }, [categoryId, sortType, searchValue, currentPage]);
 
   const pizzas = items.map((item, index) => <PizzaBlock key={index} {...item} />);
   const skeletons = [...new Array(10)].map((_, index) => <Skeleton key={index} />);
