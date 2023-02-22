@@ -1,7 +1,7 @@
 import React from 'react';
 import qs from 'qs';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   selectFilter,
@@ -30,6 +30,7 @@ export default function Home() {
 
   const onChangeCategory = React.useCallback((id) => {
     dispatch(setCategoryId(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChangePage = (number) => {
@@ -69,6 +70,7 @@ export default function Home() {
     }
 
     isMounted.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, sortType, currentPage]);
 
   // Если произошёл первый рендер, проверяем URL-параметры и сохраняем в Redux
@@ -88,6 +90,7 @@ export default function Home() {
 
       isSearch.current = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Если был первый рендер, то запрашиваем элементы
@@ -99,9 +102,14 @@ export default function Home() {
     }
 
     isSearch.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, sortType, searchValue, currentPage]);
 
-  const pizzas = items.map((item, index) => <PizzaBlock key={index} {...item} />);
+  const pizzas = items.map((item, index) => (
+    <Link key={index} to={`/pizza/${item.id}`}>
+      <PizzaBlock {...item} />
+    </Link>
+  ));
   const skeletons = [...new Array(10)].map((_, index) => <Skeleton key={index} />);
 
   return (
