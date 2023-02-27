@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
 
-export default function Skeleton() {
+function Skeleton() {
   return (
     <ContentLoader
       className="pizza-block"
@@ -20,3 +20,5 @@ export default function Skeleton() {
     </ContentLoader>
   );
 }
+
+export default Skeleton;

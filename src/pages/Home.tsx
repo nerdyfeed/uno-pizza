@@ -17,7 +17,7 @@ import Sort, { popupSortList } from '../components/Sort';
 
 import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice';
 
-export default function Home() {
+const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSearch = React.useRef(false);
@@ -28,12 +28,13 @@ export default function Home() {
 
   const sortType = sort.sortProperty;
 
-  const onChangeCategory = React.useCallback((id) => {
-    dispatch(setCategoryId(id));
+  const onChangeCategory = React.useCallback((index: number) => {
+    dispatch(setCategoryId(index));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onChangePage = (number) => {
-    dispatch(setCurrentPage(number));
+  const onChangePage = (page: number) => {
+    dispatch(setCurrentPage(page));
   };
 
   const getPizzas = async () => {
@@ -43,6 +44,7 @@ export default function Home() {
     const search = searchValue ? `&search=${searchValue}` : '';
 
     dispatch(
+      // @ts-ignore
       fetchPizzas({
         order,
         sortBy,
@@ -69,6 +71,7 @@ export default function Home() {
     }
 
     isMounted.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, sortType, currentPage]);
 
   // Если произошёл первый рендер, проверяем URL-параметры и сохраняем в Redux
@@ -88,6 +91,7 @@ export default function Home() {
 
       isSearch.current = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Если был первый рендер, то запрашиваем элементы
@@ -99,9 +103,10 @@ export default function Home() {
     }
 
     isSearch.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, sortType, searchValue, currentPage]);
 
-  const pizzas = items.map((item, index) => <PizzaBlock key={index} {...item} />);
+  const pizzas = items.map((item: any) => <PizzaBlock key={item.id} {...item} />);
   const skeletons = [...new Array(10)].map((_, index) => <Skeleton key={index} />);
 
   return (
@@ -124,3 +129,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;
