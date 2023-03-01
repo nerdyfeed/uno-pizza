@@ -1,6 +1,6 @@
 import React from 'react';
 import qs from 'qs';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -15,11 +15,12 @@ import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Sort, { popupSortList } from '../components/Sort';
 
-import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice';
+import { fetchPizzas, SearchPizzaParams, selectPizzaData } from '../redux/slices/pizzaSlice';
+import { useAppDispatch } from '../redux/store';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
@@ -44,55 +45,60 @@ const Home: React.FC = () => {
     const search = searchValue ? `&search=${searchValue}` : '';
 
     dispatch(
-      // @ts-ignore
       fetchPizzas({
         order,
         sortBy,
         category,
         search,
-        currentPage,
+        currentPage: String(currentPage),
       }),
     );
   };
 
   // Если изменили параметры и был первый рендер
-  React.useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify(
-        {
-          sortProperty: sort.sortProperty,
-          categoryId,
-          currentPage,
-        },
-        { addQueryPrefix: true },
-      );
+  // React.useEffect(() => {
+  //   if (isMounted.current) {
+  //     const queryString = qs.stringify(
+  //       {
+  //         sortProperty: sort.sortProperty,
+  //         categoryId,
+  //         currentPage,
+  //       },
+  //       { addQueryPrefix: true },
+  //     );
 
-      navigate(`${queryString}`);
-    }
+  //     navigate(`${queryString}`);
+  //   }
 
-    isMounted.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryId, sortType, currentPage]);
+  //   isMounted.current = true;
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [categoryId, sortType, currentPage]);
 
   // Если произошёл первый рендер, проверяем URL-параметры и сохраняем в Redux
-  React.useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.slice(1));
+  // React.useEffect(() => {
+  //   if (window.location.search) {
+  //     const params = qs.parse(window.location.search.slice(1)) as unknown as SearchPizzaParams;
 
-      const sort = popupSortList.find((obj) => obj.sortProperty === params.sortProperty);
+  //     const sort = popupSortList.find((obj) => obj.sortProperty === params.sortBy);
 
-      // Отправляем в Redux
-      dispatch(
-        setFilters({
-          ...params,
-          sort,
-        }),
-      );
+  //     // Отправляем в Redux
+  //     dispatch(
+  //       setFilters({
+  //         searchValue: params.search,
+  //         categoryId: Number(params.category),
+  //         currentPage: Number(params.currentPage),
+  //         sort: sort || popupSortList[0],
+  //       }),
+  //     );
 
-      isSearch.current = true;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //     isSearch.current = true;
+  //   }
+
+  //   if (!window.location.search) {
+  //     dispatch(fetchPizzas({} as SearchPizzaParams));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   // Если был первый рендер, то запрашиваем элементы
   React.useEffect(() => {
@@ -109,11 +115,13 @@ const Home: React.FC = () => {
   const pizzas = items.map((item: any) => <PizzaBlock key={item.id} {...item} />);
   const skeletons = [...new Array(10)].map((_, index) => <Skeleton key={index} />);
 
+  
+
   return (
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onChangeCategory={onChangeCategory} />
-        <Sort />
+        <Sort value={sort} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       {status === 'error' ? (

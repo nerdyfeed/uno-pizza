@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 import styles from './NotFoundBlock.module.scss';
 
 const NotFoundBlock: React.FC = () => {
@@ -6,8 +7,9 @@ const NotFoundBlock: React.FC = () => {
     <div className={styles.root}>
       <span>🛑</span>
       <br />
-      <h1>Ничего не найдено</h1>
-      <p className={styles.description}>Lorem ipsum dolor</p>
+      <h1>Ошибка 404</h1>
+      <p className={styles.description}>Ничего не найдено</p>
+      <Link className="button button--black" to="/">Вернуться на главную</Link>
     </div>
   );
 }
